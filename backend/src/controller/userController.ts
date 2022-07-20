@@ -1,11 +1,12 @@
-import { Request, Response } from 'express'
-import asyncHandler from 'express-async-handler'
+import { Request, Response, NextFunction } from 'express'
 import { CreateUserInput } from '../validation/userSchema'
 import UserModel from '../Models/userModel'
+import asyncHandler from 'express-async-handler'
 
 export const CreateUser = async (
   req: Request<{}, {}, CreateUserInput['body']>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   try {
     const user = await UserModel.create(req.body)
@@ -14,9 +15,12 @@ export const CreateUser = async (
       return res.status(201).json(user)
     }
     res.status(400)
-    throw new Error('Invalid user data')
-  } catch (error) {
-    res.status(400)
-    throw new Error('Invalid user data')
+    return next(new Error('Invalid user data'))
+  } catch (error: any) {
+    return next(error)
   }
+}
+
+export const testThrow = () => {
+  throw new Error('test error')
 }
