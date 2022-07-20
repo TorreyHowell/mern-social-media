@@ -1,18 +1,18 @@
 import mongoose from 'mongoose'
 import colors from 'colors'
+import log from './logger'
 
-export const connectDB = async () => {
+const connectDB = async () => {
   try {
     let uri: string = process.env.MONGO_URI + ''
     const conn = await mongoose.connect(uri)
-    console.log(
+    log.info(
       colors.cyan.underline(`MongoDB Connected: ${conn.connection.host}`)
     )
   } catch (error) {
     let message: string = 'Unknown Error'
     if (error instanceof Error) message = error.message
-    // we'll proceed, but let's report it
-    console.log(`Error: ${message}`)
+    log.error(`Error: ${message}`)
     process.exit(1)
   }
 }
