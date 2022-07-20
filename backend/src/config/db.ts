@@ -4,15 +4,13 @@ import log from './logger'
 
 const connectDB = async () => {
   try {
-    let uri: string = process.env.MONGO_URI + ''
+    let uri = process.env.MONGO_URI as string
     const conn = await mongoose.connect(uri)
     log.info(
       colors.cyan.underline(`MongoDB Connected: ${conn.connection.host}`)
     )
-  } catch (error) {
-    let message: string = 'Unknown Error'
-    if (error instanceof Error) message = error.message
-    log.error(`Error: ${message}`)
+  } catch (error: any) {
+    log.error(`Error: ${error.message}`)
     process.exit(1)
   }
 }

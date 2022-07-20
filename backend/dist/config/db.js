@@ -12,23 +12,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.connectDB = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const colors_1 = __importDefault(require("colors"));
+const logger_1 = __importDefault(require("./logger"));
 const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let uri = process.env.MONGO_URI + '';
+        let uri = process.env.MONGO_URI;
         const conn = yield mongoose_1.default.connect(uri);
-        console.log(colors_1.default.cyan.underline(`MongoDB Connected: ${conn.connection.host}`));
+        logger_1.default.info(colors_1.default.cyan.underline(`MongoDB Connected: ${conn.connection.host}`));
     }
     catch (error) {
-        let message = 'Unknown Error';
-        if (error instanceof Error)
-            message = error.message;
-        // we'll proceed, but let's report it
-        console.log(`Error: ${message}`);
+        logger_1.default.error(`Error: ${error.message}`);
         process.exit(1);
     }
 });
-exports.connectDB = connectDB;
-exports.default = exports.connectDB;
+exports.default = connectDB;

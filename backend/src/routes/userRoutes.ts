@@ -1,8 +1,10 @@
 import express from 'express'
-import { getMe } from '../controller/userController'
+import { CreateUser } from '../controller/userController'
+import validate from '../middleware/validateResource'
+import { createUserSchema } from '../validation/userSchema'
 
 const router = express.Router()
 
-router.get('/', getMe)
+router.post('/', validate(createUserSchema), CreateUser)
 
 export default router
