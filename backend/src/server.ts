@@ -5,15 +5,16 @@ import connectDB from './config/db'
 import colors from 'colors'
 import log from './config/logger'
 import routes from './routes/routes'
-import validate from './middleware/validateResource'
 import deserializeUser from './middleware/deserializeUser'
+import cookieParser from 'cookie-parser'
 
 const PORT = process.env.PORT || 5000
 
 const app = express()
 
 app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
 
 // Middleware
 app.use(deserializeUser)

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { validatePassword, findUser } from '../controller/userController'
 import { signJwt, verifyJwt } from '../config/jwtUtils'
 import SessionModel from '../Models/sessionModel'
+import dayjs from 'dayjs'
 import { get } from 'lodash'
 
 export const createSession = async (
@@ -29,10 +30,16 @@ export const createSession = async (
 
   // create refresh token
   const refreshToken = signJwt({ ...user, session: session._id }, 'refresh', {
-    expiresIn: '1y',
+    expiresIn: '30d',
   })
 
-  return res.send({ accessToken, refreshToken })
+  res.cookie('refreshToken', refreshToken, {
+    secure: process.env.NODE_ENV !== 'development',
+    httpOnly: true,
+    expires: dayjs().add(30, 'days').toDate(),
+  })
+
+  return res.send({ accessToken })
 }
 
 export const getSessions = async (
