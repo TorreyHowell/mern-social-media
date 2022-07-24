@@ -3,7 +3,8 @@ import { validatePassword, findUser } from '../controller/userController'
 import { signJwt, verifyJwt } from '../config/jwtUtils'
 import SessionModel from '../Models/sessionModel'
 import dayjs from 'dayjs'
-import { get } from 'lodash'
+import { get, omit } from 'lodash'
+import UserModel from '../Models/userModel'
 
 export const createSession = async (
   req: Request,
@@ -39,7 +40,12 @@ export const createSession = async (
     expires: dayjs().add(30, 'days').toDate(),
   })
 
-  return res.send({ accessToken })
+  const userData = {
+    ...omit(user, ['password', 'createdAt', 'updatedAt']),
+    accessToken,
+  }
+
+  res.status(200).json(userData)
 }
 
 export const getSessions = async (
@@ -79,4 +85,41 @@ export const reIssueAccessToken = async ({
   })
 
   return accessToken
+}
+
+export const getUserData = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const refreshToken = get(req, 'cookies.refreshToken')
+
+  if (!refreshToken) {
+    res.status(403)
+    return next(new Error('No cookies'))
+  }
+  const { decoded } = verifyJwt(refreshToken, 'refresh')
+
+  try {
+    const session = await SessionModel.findById(get(decoded, 'session'))
+
+    if (!session || !session.valid) return next(new Error('No session'))
+
+    const user = await UserModel.findById(session.user)
+
+    if (!user) return next(new Error('No user'))
+
+    const accessToken = signJwt({ ...user, session: session._id }, 'access', {
+      expiresIn: '15m',
+    })
+
+    const userData = {
+      ...omit(user.toJSON(), ['password', 'createdAt', 'updatedAt']),
+      accessToken,
+    }
+
+    res.status(200).json(userData)
+  } catch (error: any) {
+    return next(error)
+  }
 }
