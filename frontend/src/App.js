@@ -8,9 +8,12 @@ import { useEffect } from 'react'
 import { Grid } from '@mui/material'
 import Nav from './components/Nav'
 import NotFound from './pages/NotFound'
+import Header from './components/Header'
+import { useSelector } from 'react-redux'
 
 function App() {
   const dispatch = useDispatch()
+  const { isRefreshing } = useSelector((state) => state.auth)
 
   useEffect(() => {
     dispatch(refresh())
@@ -19,9 +22,13 @@ function App() {
       reset()
     }
   }, [dispatch])
+
+  if (isRefreshing) return <></>
   return (
     <>
       <BrowserRouter>
+        <Header />
+
         <Grid container justifyContent="center">
           <Routes>
             <Route path="/" element={<Home />} />

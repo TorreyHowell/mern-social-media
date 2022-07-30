@@ -36,7 +36,7 @@ function Login() {
       <Box
         component={'form'}
         onSubmit={onSubmit}
-        minHeight="93vh"
+        minHeight="80vh"
         alignItems={'center'}
         justifyContent="center"
         display={'flex'}

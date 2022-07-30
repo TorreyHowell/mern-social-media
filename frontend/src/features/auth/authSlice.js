@@ -6,6 +6,7 @@ const initialState = {
   isError: false,
   isSuccess: false,
   isLoading: false,
+  isRefreshing: true,
   message: '',
 }
 
@@ -51,8 +52,16 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(refresh.pending, (state) => {
+        state.isRefreshing = true
+      })
       .addCase(refresh.fulfilled, (state, action) => {
         state.user = action.payload
+        state.isRefreshing = false
+      })
+      .addCase(refresh.rejected, (state, action) => {
+        state.message = action.payload
+        state.isRefreshing = false
       })
       .addCase(login.fulfilled, (state, action) => {
         state.user = action.payload

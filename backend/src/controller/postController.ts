@@ -44,3 +44,16 @@ export const createPost = async (
     return next(error)
   }
 }
+
+export const getPosts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const posts = await PostModel.find().populate('user', '-password -__v')
+    res.status(200).json(posts)
+  } catch (error) {
+    return next(error)
+  }
+}
