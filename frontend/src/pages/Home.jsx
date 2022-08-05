@@ -17,7 +17,7 @@ function Home() {
     }
   }, [dispatch])
   return (
-    <Box>
+    <Box sx={{}}>
       {posts.map((post) => (
         <Post key={post._id} post={post} />
       ))}

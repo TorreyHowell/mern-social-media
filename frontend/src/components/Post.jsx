@@ -6,21 +6,34 @@ import CardActions from '@mui/material/CardActions'
 import Avatar from '@mui/material/Avatar'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
-import { red } from '@mui/material/colors'
+import { blue } from '@mui/material/colors'
 import FavoriteIcon from '@mui/icons-material/Favorite'
+import useWindowDimensions from '../hooks/useWindowDimensions'
+import { isMobile } from 'react-device-detect'
+import { Box } from '@mui/system'
 
 function Post({ post }) {
+  const { width } = useWindowDimensions()
+
+  const calculateWidth = () => {
+    if (isMobile) {
+      return width - 20
+    }
+
+    return 450
+  }
   return (
     <Card
       sx={{
-        maxWidth: 345,
-        marginTop: '10px',
+        margin: '10px 10px 0 10px',
+        maxWidth: 500,
+        minWidth: calculateWidth,
       }}
     >
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            R
+          <Avatar sx={{ bgcolor: blue[500] }} aria-label="recipe">
+            {post.user.userName.charAt(0).toUpperCase()}
           </Avatar>
         }
         title={post.user.userName}
@@ -33,7 +46,21 @@ function Post({ post }) {
       />
 
       {post.media && (
-        <CardMedia component="img" height="194" image={post.media} />
+        <Box
+          id="card-box"
+          sx={{
+            padding: 1,
+          }}
+        >
+          <a href={post.media} rel="noreferrer" target="_blank">
+            <CardMedia
+              href={post.media}
+              component="img"
+              height="250"
+              image={post.media}
+            />
+          </a>
+        </Box>
       )}
 
       <CardContent>

@@ -10,6 +10,8 @@ import Nav from './components/Nav'
 import NotFound from './pages/NotFound'
 import Header from './components/Header'
 import { useSelector } from 'react-redux'
+import Create from './pages/Create'
+import Register from './pages/Register'
 
 function App() {
   const dispatch = useDispatch()
@@ -34,6 +36,9 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/create" element={<Create />} />
+
             <Route path="/*" element={<NotFound />} />
           </Routes>
         </Grid>

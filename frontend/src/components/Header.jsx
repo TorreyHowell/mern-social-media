@@ -9,14 +9,16 @@ import Avatar from '@mui/material/Avatar'
 import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
 import { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
+import { logout } from '../features/auth/authSlice'
 
 function Header() {
   const [anchorElUser, setAnchorElUser] = useState(null)
   const { user } = useSelector((state) => state.auth)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget)
@@ -26,9 +28,10 @@ function Header() {
     setAnchorElUser(null)
   }
 
-  const logout = () => {
+  const handleLogout = () => {
     handleCloseUserMenu()
-    navigate('login')
+
+    dispatch(logout())
   }
   return (
     <AppBar
@@ -42,8 +45,6 @@ function Header() {
           <Typography
             variant="h5"
             noWrap
-            component={Link}
-            to="/"
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'flex' },
@@ -55,16 +56,16 @@ function Header() {
               textDecoration: 'none',
             }}
           >
-            Not Twitter
+            <Link className="noStyle" to={'/'}>
+              Cacaw
+            </Link>
           </Typography>
 
           <Box sx={{ flexGrow: 0 }}>
             {user ? (
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar>{user?.userName.charAt(0).toUpperCase()}</Avatar>
-                </IconButton>
-              </Tooltip>
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar>{user?.userName?.charAt(0).toUpperCase()}</Avatar>
+              </IconButton>
             ) : (
               <IconButton component={Link} to="/login" sx={{ p: 0 }}>
                 <Avatar></Avatar>
@@ -91,7 +92,7 @@ function Header() {
                 <MenuItem key="dashboard" onClick={handleCloseUserMenu}>
                   <Typography textAlign="center">Dashboard</Typography>
                 </MenuItem>
-                <MenuItem key="logout" onClick={logout}>
+                <MenuItem key="logout" onClick={handleLogout}>
                   <Typography textAlign="center">logout</Typography>
                 </MenuItem>
               </Menu>

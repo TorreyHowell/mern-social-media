@@ -23,7 +23,7 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <ThemeProvider theme={darkTheme}>
-        <CssBaseline />
+        <CssBaseline enableColorScheme />
         <App />
       </ThemeProvider>
     </Provider>

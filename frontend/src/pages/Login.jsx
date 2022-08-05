@@ -1,8 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { TextField, Box, Typography, Button, Grid } from '@mui/material'
 import { login } from '../features/auth/authSlice'
+import { Link } from 'react-router-dom'
 
 function Login() {
   const { user, isSuccess } = useSelector((state) => state.auth)
@@ -12,13 +13,14 @@ function Login() {
   })
 
   const navigate = useNavigate()
+  const location = useLocation()
   const dispatch = useDispatch()
 
   useEffect(() => {
     if (isSuccess || user) {
-      navigate('/')
+      navigate(`${location?.state?.from ? location.state.from : '/'}`)
     }
-  }, [navigate, user, isSuccess])
+  }, [navigate, user, isSuccess, location])
 
   const onSubmit = (e) => {
     e.preventDefault()
@@ -78,6 +80,9 @@ function Login() {
               Login
             </Button>
           </Grid>
+          <Typography mt={2} textAlign={'center'}>
+            Don't have an account? <Link to={'/register'}>Sign up</Link>
+          </Typography>
         </Box>
       </Box>
     </>

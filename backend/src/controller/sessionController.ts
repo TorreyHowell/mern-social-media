@@ -106,6 +106,8 @@ export const getUserData = async (
     if (!session || !session.valid) return next(new Error('No session'))
 
     const user = await UserModel.findById(session.user)
+      .select('-password')
+      .lean()
 
     if (!user) return next(new Error('No user'))
 
@@ -114,12 +116,30 @@ export const getUserData = async (
     })
 
     const userData = {
-      ...omit(user.toJSON(), ['password', 'createdAt', 'updatedAt']),
+      ...user,
       accessToken,
     }
 
     res.status(200).json(userData)
   } catch (error: any) {
+    return next(error)
+  }
+}
+
+export const deleteSession = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const refreshToken = get(req, 'cookies.refreshToken')
+
+  const { decoded } = verifyJwt(refreshToken, 'refresh')
+
+  try {
+    await SessionModel.findByIdAndDelete(get(decoded, 'session'))
+    res.clearCookie('refreshToken')
+    res.end()
+  } catch (error) {
     return next(error)
   }
 }

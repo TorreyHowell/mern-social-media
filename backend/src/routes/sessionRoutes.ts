@@ -6,6 +6,7 @@ import {
   createSession,
   getSessions,
   getUserData,
+  deleteSession,
 } from '../controller/sessionController'
 
 const router = express.Router()
@@ -13,5 +14,6 @@ const router = express.Router()
 router.post('/', validate(createSessionSchema), createSession)
 router.get('/', requireUser, getSessions)
 router.get('/refresh', getUserData)
+router.delete('/', deleteSession)
 
 export default router

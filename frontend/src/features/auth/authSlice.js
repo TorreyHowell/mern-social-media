@@ -39,6 +39,36 @@ export const login = createAsyncThunk(
   }
 )
 
+export const register = createAsyncThunk(
+  'auth/register',
+  async (userData, thunkAPI) => {
+    try {
+      return authService.register(userData)
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString()
+      return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
+
+export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
+  try {
+    const token = thunkAPI.getState().auth.user.accessToken
+    return authService.logout(token)
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString()
+    return thunkAPI.rejectWithValue(message)
+  }
+})
+
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -47,7 +77,7 @@ export const authSlice = createSlice({
       state.isLoading = false
       state.isSuccess = false
       state.isError = false
-      state.message = false
+      state.message = ''
     },
   },
   extraReducers: (builder) => {
@@ -65,6 +95,28 @@ export const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.user = action.payload
+      })
+      .addCase(logout.fulfilled, (state, action) => {
+        state.user = null
+        state.isRefreshing = false
+      })
+      .addCase(logout.rejected, (state, action) => {
+        state.message = action.payload
+        state.isRefreshing = false
+      })
+      .addCase(logout.pending, (state, action) => {
+        state.isLoading = true
+      })
+      .addCase(register.pending, (state) => {
+        state.isRefreshing = true
+      })
+      .addCase(register.fulfilled, (state, action) => {
+        state.user = action.payload
+        state.isRefreshing = false
+      })
+      .addCase(register.rejected, (state, action) => {
+        state.message = action.payload
+        state.isRefreshing = false
       })
   },
 })
